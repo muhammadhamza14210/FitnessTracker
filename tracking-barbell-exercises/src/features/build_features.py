@@ -61,7 +61,7 @@ plt.show()
 df_pca = pca.apply_pca(df_pca,predictor_columns,3)
 
 # Sum of squares attributes
-df_squared = df.copy()
+df_squared = df_pca.copy()
 
 acc_r = df_squared["acc_x"] ** 2 + df_squared["acc_y"] ** 2 + df_squared["acc_z"] ** 2
 gyr_r = df_squared["gyr_x"] ** 2 + df_squared["gyr_y"] ** 2 + df_squared["gyr_z"] ** 2
