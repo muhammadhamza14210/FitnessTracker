@@ -31,21 +31,41 @@ for s in df["set"].unique():
 
 duration_df = df.groupby(["category"])["duration"].mean()
 
-    
-
-# --------------------------------------------------------------
 # Butterworth lowpass filter
-# --------------------------------------------------------------
+df_lowpass = df.copy()
+LowPass = LowPassFilter()
+
+fs = 1000/5
+cutoffs = 1
+
+for col in predictor_columns:
+    df_lowpass = LowPass.low_pass_filter(df_lowpass, col, fs, cutoffs, order=5)
+    df_lowpass[col] = df_lowpass[col + "_lowpass"]
+    del df_lowpass[col + "_lowpass"]
 
 
-# --------------------------------------------------------------
 # Principal component analysis PCA
-# --------------------------------------------------------------
+df_pca = df.copy()
+pca = PrincipalComponentAnalysis()
 
+pc_values = pca.determine_pc_explained_variance(df_pca,predictor_columns)
 
-# --------------------------------------------------------------
+plt.figure(figsize=(10,10))
+plt.plot(range(1,len(predictor_columns)+1),pc_values)
+plt.xlabel("Principal Component")
+plt.ylabel("Explained Variance")
+plt.show()   
+
+df_pca = pca.apply_pca(df_pca,predictor_columns,3)
+
 # Sum of squares attributes
-# --------------------------------------------------------------
+df_squared = df.copy()
+
+acc_r = df_squared["acc_x"] ** 2 + df_squared["acc_y"] ** 2 + df_squared["acc_z"] ** 2
+gyr_r = df_squared["gyr_x"] ** 2 + df_squared["gyr_y"] ** 2 + df_squared["gyr_z"] ** 2
+
+df_squared["acc_r"] = np.sqrt(acc_r)
+df_squared["gyr_r"] = np.sqrt(gyr_r)
 
 
 # --------------------------------------------------------------
